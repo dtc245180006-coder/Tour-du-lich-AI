@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <script src="/static/vendor/purify.min.js"></script>
+  <script src="/static/js/ui_safety.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang chu | VietJourney AI</title>
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/static/vendor/tailwind.css">
+  
+  <!-- FontAwesome Icons & Chart.js -->
+  <link rel="stylesheet" href="/static/vendor/css/all.min.css">
+  <script src="/static/vendor/chart.umd.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-100 dark:bg-[#030712] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-200">
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside id="main-sidebar" class="w-72 bg-white dark:bg-[#0c1322] border-r border-slate-200 dark:border-slate-800/80 flex flex-col shrink-0 z-30 transition-colors duration-200">
+      
+      <!-- Brand Header -->
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800/80">
+        <div class="brand-box rounded-2xl p-3 flex items-center space-x-3 backdrop-blur-md">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-500 to-cyan-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-plane-departure text-white text-lg"></i>
+          </div>
+          <div class="overflow-hidden">
+            <h1 class="font-extrabold text-base tracking-wider text-slate-900 dark:text-white brand-text-glow flex items-center">
+              VIETJOURNEY <span class="text-sky-600 dark:text-sky-400 text-xs ml-1.5 px-1.5 py-0.2 bg-sky-500/10 border border-sky-400/30 rounded">AI</span>
+            </h1>
+            <p class="text-[11px] text-slate-500 dark:text-cyan-300/80 truncate">Hệ Thống Tour Thông Minh</p>
+          </div>
+        </div>
+
+        <!-- Language & Currency -->
+        <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+          <span>Ngôn ngữ: <strong class="text-slate-700 dark:text-slate-200">Tiếng Việt</strong></span>
+          <span>Tiền tệ: <strong class="text-slate-700 dark:text-slate-200">VND (đ)</strong></span>
+        </div>
+
+        <!-- User Role / Mode Status Box -->
+        <div class="mt-3 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-slate-500 dark:text-slate-400">Trạng thái:</span>
+            <span id="sidebar-auth-status" class="font-bold text-slate-700 dark:text-slate-300">Khách vãng lai</span>
+          </div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-slate-500 dark:text-slate-400">Vai trò:</span>
+            <span id="sidebar-role-name" class="font-bold text-sky-600 dark:text-emerald-400 text-[11px]">Chưa đăng nhập</span>
+          </div>
+          <!-- Action Button in Sidebar -->
+          <div id="sidebar-auth-btn-container" class="pt-2 border-t border-slate-200 dark:border-slate-800 text-center">
+            <button onclick="window.App.openLoginModal()" class="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center justify-center mx-auto space-x-1">
+              <i class="fa-solid fa-lock text-[10px]"></i>
+              <span>Dành cho nhân viên đăng nhập</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links (Dynamic by Role) -->
+      <div class="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-xs">
+        
+        <!-- Khối Menu Chung (Ai cũng thấy) -->
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Khám Phá & Đặt Tour</span>
+          <div class="space-y-0.5">
+            <a href="/home" data-tab="home" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-white bg-sky-600 shadow-sm cursor-pointer">
+              <i class="fa-solid fa-house w-4 text-center"></i>
+              <span>Trang Chủ Tour</span>
+            </a>
+            <a href="/guides" data-tab="guides" class="sidebar-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-user-tie w-4 text-center text-purple-500"></i>
+                <span>Hướng Dẫn Viên</span>
+              </div>
+              
+            </a>
+            <a href="/ai" data-tab="ai" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <i class="fa-solid fa-robot w-4 text-center text-cyan-500"></i>
+              <span>Trợ Lý AI Gemini</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Khối Menu Dành Riêng Cho Nhân Viên & Admin -->
+        <div id="sidebar-staff-menu" class="hidden space-y-4">
+          
+          <!-- Nghiệp vụ Tư vấn & Vận hành -->
+          <div>
+            <span class="text-[10px] font-bold text-sky-600 dark:text-sky-400 tracking-wider uppercase px-3 flex items-center justify-between mb-1">
+              <span>Nghiệp Vụ Nhân Viên</span>
+              <span id="sidebar-queue-badge" class="hidden text-[9px] bg-amber-500 text-white font-bold px-1.5 py-0.2 rounded-full">0</span>
+            </span>
+            <div class="space-y-0.5">
+              <!-- HÀNG CHỜ TƯ VẤN (CỰC KỲ QUAN TRỌNG CHO NHÂN VIÊN TƯ VẤN) -->
+              <a href="/queue" data-tab="queue" class="sidebar-nav-item consultant-access w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <div class="flex items-center space-x-3">
+                  <i class="fa-solid fa-inbox w-4 text-center text-amber-500"></i>
+                  <span>Hàng Chờ Tư Vấn</span>
+                </div>
+                <span id="queue-counter-chip" class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-300 px-2 py-0.5 rounded-full">0 đơn</span>
+              </a>
+
+              <a href="/tours" data-tab="tours" class="sidebar-nav-item consultant-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-map-location-dot w-4 text-center text-sky-500"></i>
+                <span>Quản Lý Tour</span>
+              </a>
+
+              <a href="/departures" data-tab="departures" class="sidebar-nav-item consultant-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-calendar-days w-4 text-center text-indigo-500"></i>
+                <span>Lịch Khởi Hành & Chỗ</span>
+              </a>
+
+              <a href="/bookings" data-tab="bookings" class="sidebar-nav-item staff-booking-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-ticket w-4 text-center text-emerald-500"></i>
+                <span>Đặt Chỗ Đã Xác Nhận</span>
+              </a>
+
+              <a href="/feedbacks" data-tab="feedbacks" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-comment-dots w-4 text-center text-rose-500"></i>
+                <span>Phản Hồi & Đánh Giá</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Nghiệp vụ Kế toán -->
+          <div id="sidebar-accounting-group" class="accountant-access">
+            <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Kế Toán & Doanh Thu</span>
+            <div class="space-y-0.5">
+              <a href="/payments" data-tab="payments" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-receipt w-4 text-center text-emerald-500"></i>
+                <span>Kế Toán & Đặt Cọc</span>
+              </a>
+              <a href="/analytics" data-tab="analytics" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-chart-line w-4 text-center text-sky-500"></i>
+                <span>Thống Kê Doanh Thu</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- DÀNH RIÊNG CHO ADMIN: QUẢN LÝ TÀI KHOẢN & PHÂN QUYỀN -->
+          <div id="sidebar-admin-group" class="admin-access">
+            <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400 tracking-wider uppercase px-3 block mb-1">Quản Trị Hệ Thống (Admin)</span>
+            <div class="space-y-0.5">
+              <a href="/users" data-tab="users" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-users-gear w-4 text-center text-rose-500"></i>
+                <span>Quản Lý Tài Khoản (RBAC)</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Báo cáo SDLC & API Documentation -->
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Tài Liệu & Báo Cáo</span>
+          <div class="space-y-0.5">
+            <a href="/sdlc" data-tab="sdlc" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <i class="fa-solid fa-book-bookmark w-4 text-center text-indigo-400"></i>
+              <span>Tài Liệu SDLC (KT1-KT3)</span>
+            </a>
+            <a href="/docs" target="_blank" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
+              <span>Tài Liệu API (Swagger)</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer User Info -->
+      <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5 overflow-hidden">
+          <div id="footer-user-avatar" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-bold">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="overflow-hidden">
+            <p id="footer-user-name" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Khách Vãng Lai</p>
+            <p id="footer-user-role" class="text-[10px] text-slate-500 truncate">Khách</p>
+          </div>
+        </div>
+        <button id="footer-logout-btn" onclick="window.App.logout()" class="hidden text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="Đăng xuất">
+          <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      
+      <!-- Top Header -->
+      <header class="h-16 bg-white dark:bg-[#0c1322] border-b border-slate-200 dark:border-slate-800 px-6 flex items-center justify-between z-20 shrink-0 transition-colors duration-200">
+        <div class="flex items-center space-x-4">
+          <button id="sidebar-toggle-btn" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+            <i class="fa-solid fa-bars text-base"></i>
+          </button>
+          
+          <!-- Stat Pill (Chỉ Admin & Kế toán) -->
+          <div id="topbar-revenue-pill" class="accountant-access flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl text-xs" style="display: none;">
+            <span class="text-slate-500 dark:text-slate-400">Doanh thu ghi nhận:</span>
+            <span id="topbar-stat-revenue" class="font-extrabold text-sky-600 dark:text-sky-400">0 đ</span>
+          </div>
+          <!-- Hotline hỗ trợ (Dành cho Khách vãng lai & Tư vấn viên không xem doanh thu) -->
+          <div id="topbar-guest-pill" class="non-revenue-access flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-headset text-sky-500 mr-1"></i>Hotline tư vấn:</span>
+            <span class="font-extrabold text-sky-600 dark:text-sky-400">1900 6868</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          
+
+          <!-- Light/Dark Mode Switcher -->
+                    <!-- Nút Tra Cứu Đơn Tour dành cho Khách hàng -->
+          <button onclick="window.App.openGuestTrackingModal()" class="flex items-center space-x-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs px-3 py-2 rounded-xl transition-all border border-slate-200 dark:border-slate-700 shadow-sm" title="Tra cứu tiến độ đặt cọc & thanh toán mà không cần đăng nhập">
+            <i class="fa-solid fa-receipt text-sky-500"></i>
+            <span>Tra Cứu Đơn Tour</span>
+          </button>
+
+          <button id="theme-toggle-btn" class="p-2 text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-sky-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Chuyển chế độ Sáng / Tối">
+            <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+          </button>
+
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <i class="fa-regular fa-bell text-base"></i>
+              <span id="topbar-notif-dot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+            </button>
+          </div>
+
+          <!-- User Authentication Section in Topbar -->
+          <div id="topbar-auth-section" class="flex items-center pl-2 border-l border-slate-200 dark:border-slate-800">
+            <!-- Nút Đăng Nhập khi chưa đăng nhập -->
+            <button id="topbar-login-btn" onclick="window.App.openLoginModal()" class="flex items-center space-x-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-sm transition-all">
+              <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              <span>Đăng Nhập</span>
+            </button>
+
+            <!-- User Info Dropdown khi đã đăng nhập -->
+            <div id="topbar-user-dropdown" class="hidden relative">
+              <button onclick="document.getElementById('user-dropdown-menu').classList.toggle('hidden')" class="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                  <span id="topbar-user-initial">A</span>
+                </div>
+                <div class="text-left hidden sm:block">
+                  <p id="topbar-user-name" class="text-xs font-bold text-slate-800 dark:text-slate-100">Admin</p>
+                  <p id="topbar-user-role-badge" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">Quản Trị Viên</p>
+                </div>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-fade-in text-xs">
+                <div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <p class="font-bold text-slate-800 dark:text-slate-200" id="dropdown-full-name">Quản Trị Viên</p>
+                  <p class="text-[10px] text-slate-400" id="dropdown-username">@admin</p>
+                </div>
+                <button onclick="window.App.switchTab('users')" class="admin-access w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center space-x-2">
+                  <i class="fa-solid fa-users-gear text-sky-500"></i>
+                  <span>Quản lý tài khoản</span>
+                </button>
+                <button onclick="window.App.switchTab('queue')" class="consultant-access w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center space-x-2">
+                  <i class="fa-solid fa-inbox text-amber-500"></i>
+                  <span>Hàng chờ tư vấn</span>
+                </button>
+                <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                <button onclick="window.App.logout()" class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2 font-semibold">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content Body -->
+      <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50 dark:bg-[#030712] transition-colors duration-200">
+
+<section id="view-home" class="tab-content-view space-y-6">
+          
+          <!-- KPI Cards Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Tổng tour mở bán</span>
+              <p id="stat-total-tours" class="text-2xl font-black text-sky-600 dark:text-sky-400 mt-1">8</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Lịch khởi hành mở</span>
+              <p id="stat-active-deps" class="text-2xl font-black text-emerald-500 mt-1">7</p>
+            </div>
+            <!-- Card Doanh thu (Chỉ hiển thị cho Kế toán & Admin) -->
+            <div id="card-revenue" class="accountant-access bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm" style="display: none;">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Tổng doanh thu</span>
+              <p id="stat-total-revenue" class="text-2xl font-black text-indigo-500 mt-1">0 đ</p>
+            </div>
+            <!-- Card thay thế dành cho Khách vãng lai & Tư vấn viên: Điểm đánh giá CSAT hoặc Chất lượng dịch vụ -->
+            <div id="card-guest-csat" class="non-revenue-access bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Đánh giá dịch vụ</span>
+              <p class="text-2xl font-black text-amber-500 mt-1"><i class="fa-solid fa-star text-amber-400 text-lg mr-1"></i>4.9 / 5</p>
+            </div>
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Tỷ lệ lấp đầy bình quân</span>
+              <p id="stat-occupancy" class="text-2xl font-black text-amber-500 mt-1">0%</p>
+            </div>
+          </div>
+
+          <!-- Home Tour Search Toolbar -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div class="relative w-full sm:flex-1">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              </span>
+              <input type="text" id="home-tour-search-keyword" oninput="window.App.onHomeTourSearchChange()" placeholder="Tìm nhanh theo tên tour, điểm đến (VD: Côn Đảo, Sa Pa, Đà Lạt, Miền Tây...)..." class="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500" />
+              <button id="home-tour-clear-search" onclick="window.App.clearHomeTourSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600" title="Xóa từ khóa tìm kiếm">
+                <i class="fa-solid fa-xmark text-xs"></i>
+              </button>
+            </div>
+            <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 px-1 whitespace-nowrap self-end sm:self-center" id="home-tour-count-badge">
+              Hiển thị tour
+            </div>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="flex items-center space-x-2 overflow-x-auto pb-2">
+            <button data-category="ALL" class="category-tab-btn active bg-sky-600 text-white font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap shadow-sm">
+              TẤT CẢ TOUR
+            </button>
+            <button data-category="BIEN_DAO" class="category-tab-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap transition-colors">
+              TOUR BIỂN ĐẢO
+            </button>
+            <button data-category="TAY_BAC" class="category-tab-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap transition-colors">
+              TOUR TÂY BẮC
+            </button>
+            <button data-category="DI_SAN" class="category-tab-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap transition-colors">
+              TOUR DI SẢN
+            </button>
+            <button data-category="MIEN_TAY" class="category-tab-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap transition-colors">
+              TOUR MIỀN TÂY
+            </button>
+            <button data-category="NGHIDUONG" class="category-tab-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs px-4 py-2 rounded-xl whitespace-nowrap transition-colors">
+              TOUR NGHỈ DƯỠNG
+            </button>
+          </div>
+
+          <!-- Tour Grid Cards -->
+          <div id="tour-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            <!-- Rendered by app.js -->
+          </div>
+
+        </section>
+
+</main>
+    </div>
+  </div>
+
+  <!-- ==================== FLOATING AI BUTTON ==================== -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button id="floating-ai-btn" class="floating-ai-btn w-14 h-14 rounded-full bg-gradient-to-tr from-sky-500 via-cyan-400 to-indigo-500 text-white shadow-xl flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-all">
+      <i class="fa-solid fa-headset"></i>
+    </button>
+  </div>
+
+  <!-- FLOATING AI DRAWER -->
+  <div id="floating-ai-drawer" class="hidden fixed bottom-24 right-6 w-96 max-w-[90vw] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col h-[520px] animate-fade-in text-xs">
+    <div class="bg-gradient-to-r from-sky-600 to-cyan-600 p-4 text-white flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-robot text-lg"></i>
+        <div>
+          <h4 class="font-bold text-xs">Trợ Lý Tư Vấn VietJourney AI</h4>
+          <span class="text-[10px] text-cyan-200">Gemini Grounded • Trực tuyến 24/7</span>
+        </div>
+      </div>
+      <button onclick="window.App.toggleFloatingAI()" class="text-white hover:text-slate-200 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <div id="quick-ai-messages" class="flex-1 p-3 overflow-y-auto space-y-3">
+      <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl text-slate-800 dark:text-slate-200 leading-relaxed">
+        Dạ chào bạn! Hãy nói cho em biết bạn muốn đi đâu, mấy ngày và ngân sách bao nhiêu để em gợi ý các tour còn chỗ tốt nhất nhé!
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+      <input type="text" id="quick-ai-input" placeholder="Hỏi AI tour..." class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none" onkeypress="if(event.key==='Enter') window.App.sendFloatingAIMessage();" />
+      <button id="quick-ai-send" onclick="window.App.sendFloatingAIMessage()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-xl font-bold">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL ĐĂNG NHẬP (LOGIN MODAL) -->
+    <!-- MODAL QUẢN LÝ KHÁCH HÀNG CHUYẾN ĐI & XỬ LÝ HỦY KHẨN CẤP -->
+  <div id="departure-customers-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl p-6 space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" id="dep-cust-modal-title">Danh Sách Khách Hàng Chuyến Đi</h3>
+            <p class="text-[11px] text-slate-500" id="dep-cust-modal-subtitle">Liên hệ khách hàng & xử lý điều phối / hủy chuyến khẩn cấp</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('departure-customers-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Quick Action Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="font-bold text-slate-700 dark:text-slate-200" id="dep-cust-count-badge">Tổng: 0 khách</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btn-copy-cust-phones" onclick="window.App.copyAllCustomerPhones()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors" title="Sao chép toàn bộ số điện thoại để gửi SMS/Zalo">
+            <i class="fa-solid fa-copy"></i>
+            <span>Sao chép tất cả SĐT</span>
+          </button>
+          <button id="btn-emergency-cancel-dep" class="admin-access px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-colors" title="Hủy chuyến khẩn cấp do thiên tai/sự cố, tự động hoàn tiền 100% cho khách">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Hủy Chuyến Khẩn Cấp & Hoàn 100% Tiền</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table of Customers -->
+      <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <th class="py-2.5 px-3">Mã đơn</th>
+              <th class="py-2.5 px-3">Khách hàng</th>
+              <th class="py-2.5 px-3">Số điện thoại</th>
+              <th class="py-2.5 px-3">Số khách</th>
+              <th class="py-2.5 px-3">Tổng tiền</th>
+              <th class="py-2.5 px-3">Đã đóng</th>
+              <th class="py-2.5 px-3">Trạng thái</th>
+              <th class="py-2.5 px-3 text-right">Liên hệ</th>
+            </tr>
+          </thead>
+          <tbody id="dep-customers-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="window.App.closeModal('departure-customers-modal')" class="px-5 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md shadow-2xl p-6 space-y-5 animate-fade-in text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-900 dark:text-slate-100">Đăng Nhập Hệ Thống</h3>
+            <p class="text-[11px] text-slate-500">Dành cho Quản trị viên, Tư vấn viên & Kế toán</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('login-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Tên đăng nhập</label>
+          <input type="text" id="login-username" placeholder="Nhập admin, tuvan hoặc ketoan" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Mật khẩu</label>
+          <input type="password" id="login-password" placeholder="Nhập mật khẩu (vd: admin123)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-sky-500" onkeypress="if(event.key==='Enter') window.App.submitLogin();" />
+        </div>
+
+        <button onclick="window.App.submitLogin()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-xl shadow-md transition-colors text-xs flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Xác Nhận Đăng Nhập</span>
+        </button>
+
+        <!-- Quick Demo Login Buttons -->
+        <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 text-center">Đăng nhập nhanh 1 chạm (Tài khoản mẫu):</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="window.App.quickLoginDemo('admin', 'admin123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Admin</span>
+              <span class="text-[10px] text-sky-600">Quản lý</span>
+            </button>
+            <button onclick="window.App.quickLoginDemo('tuvan', 'tuvan123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Tư Vấn</span>
+              <span class="text-[10px] text-amber-600">Sales</span>
+            </button>
+            <button onclick="window.App.quickLoginDemo('ketoan', 'ketoan123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Kế Toán</span>
+              <span class="text-[10px] text-emerald-600">Thu chi</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ĐĂNG KÝ TƯ VẤN CHO KHÁCH VÃNG LAI (GUEST BOOKING MODAL) -->
+  <div id="booking-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-fade-in text-xs">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
+        <div>
+          <span class="text-[10px] font-bold bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-300 px-2 py-0.5 rounded">ĐẶT TOUR & TRỪ CHỖ TỨC THỜI</span>
+          <h3 id="modal-booking-tour-name" class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1">Tour du lịch</h3>
+        </div>
+        <button onclick="window.App.closeModal('booking-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-3.5">
+        <input type="hidden" id="modal-booking-unit-price" value="0" />
+        
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Chọn đợt khởi hành:</label>
+          <select id="modal-booking-dep-select" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Họ và tên khách:</label>
+            <input type="text" id="modal-booking-cust-name" placeholder="Nguyễn Văn A" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Số điện thoại:</label>
+            <input type="text" id="modal-booking-cust-phone" placeholder="0901234567" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Email:</label>
+            <input type="email" id="modal-booking-cust-email" placeholder="email@gmail.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Số lượng khách / chỗ:</label>
+            <input type="number" id="modal-booking-num-people" value="1" min="1" oninput="window.App.calculateBookingTotal()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-center font-bold" />
+          </div>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">Tổng giá trị tour:</span>
+            <span id="modal-booking-total-display" class="font-bold text-slate-800 dark:text-slate-100">0 đ</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500">Tiền đặt cọc (30%):</span>
+            <span id="modal-booking-deposit-display" class="font-bold text-sky-600 dark:text-sky-400">0 đ</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Thanh toán đợt này:</label>
+            <input type="number" id="modal-booking-initial-pay" value="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-600" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Hình thức:</label>
+            <select id="modal-booking-pay-method" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs">
+              <option value="BANK_TRANSFER">Chuyển khoản</option>
+              <option value="CASH">Tiền mặt</option>
+              <option value="CREDIT_CARD">Thẻ POS</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex justify-end space-x-2">
+        <button onclick="window.App.closeModal('booking-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300">Hủy</button>
+        <button onclick="window.App.submitBooking()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 shadow-md">Xác nhận Đặt & Trừ Chỗ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="guest-booking-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 animate-fade-in text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div>
+          <span class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">HÀNG CHỜ TƯ VẤN</span>
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 mt-1">Đăng Ký Tư Vấn & Giữ Chỗ Tour</h3>
+        </div>
+        <button onclick="window.App.closeModal('guest-booking-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-800/50 rounded-xl p-3 text-slate-600 dark:text-slate-300 leading-relaxed">
+        ℹ️ Bạn đang gửi yêu cầu với tư cách <strong>Khách vãng lai</strong>. Thông tin của bạn sẽ được chuyển đến <strong>Bộ phận Tư vấn</strong>. Chuyên viên VietJourney sẽ liên hệ trong giờ làm việc để tư vấn chi tiết và giữ chỗ.
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Chọn tour và đợt khởi hành (*):</label>
+          <select id="guest-dep-select" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Họ và tên của bạn (*):</label>
+            <input type="text" id="guest-cust-name" placeholder="Nguyễn Văn A" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Số điện thoại liên hệ (*):</label>
+            <input type="text" id="guest-cust-phone" placeholder="0901234567" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Email nhận thông báo:</label>
+            <input type="email" id="guest-cust-email" placeholder="email@gmail.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Dự kiến số lượng khách:</label>
+            <input type="number" id="guest-num-people" value="2" min="1" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-center font-bold" />
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ghi chú hoặc câu hỏi cho nhân viên tư vấn:</label>
+          <textarea id="guest-special-requests" rows="2" placeholder="Ví dụ: Có người cao tuổi, ăn chay, cần phòng đôi..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="window.App.closeModal('guest-booking-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400">Hủy</button>
+        <button onclick="window.App.submitGuestBooking()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 shadow-sm">
+          Gửi Yêu Cầu Cho Tư Vấn Viên
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHI TIẾT TOUR -->
+  <div id="tour-details-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden animate-fade-in max-h-[90vh] flex flex-col text-xs">
+      <div class="relative h-48 shrink-0">
+        <img id="tour-detail-img" src="" alt="Tour image" class="w-full h-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+        <button onclick="window.App.closeModal('tour-details-modal')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/70">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <div class="absolute bottom-4 left-5 right-5 text-white">
+          <span id="tour-detail-code" class="text-[10px] font-mono bg-sky-600 px-2 py-0.5 rounded font-bold"></span>
+          <h3 id="tour-detail-title" class="font-extrabold text-base mt-1"></h3>
+          <p id="tour-detail-dest" class="text-xs text-cyan-300 mt-0.5"></p>
+        </div>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div>
+          <span class="text-slate-400 font-semibold block mb-1">Giá niêm yết:</span>
+          <p id="tour-detail-price" class="text-xl font-black text-sky-600 dark:text-sky-400"></p>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold block mb-1">Giới thiệu hành trình:</span>
+          <p id="tour-detail-desc" class="text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line"></p>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold block mb-1">Lịch trình chi tiết:</span>
+          <div id="tour-detail-itinerary" class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed font-mono"></div>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold block mb-1">Điểm nhấn nổi bật:</span>
+          <p id="tour-detail-highlights" class="text-sky-600 dark:text-sky-300 font-semibold"></p>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 flex justify-end">
+        <button onclick="window.App.closeModal('tour-details-modal')" class="px-5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CẤU HÌNH GOOGLE GEMINI API KEY -->
+  <div id="modal-gemini-config" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-5 animate-fade-in text-xs">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-sm shadow-md">
+            <i class="fa-solid fa-key"></i>
+          </span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Cấu Hình Google Gemini API Key</h3>
+            <p class="text-[11px] text-slate-400">Kích hoạt Generative AI thời gian thực trên đám mây của Google</p>
+          </div>
+        </div>
+        <button onclick="window.AIHub.closeKeyModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Current Status Alert -->
+      <div id="modal-gemini-status-alert" class="p-3.5 rounded-xl border bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+        <i class="fa-solid fa-circle-info text-sky-500 text-sm mt-0.5"></i>
+        <div class="flex-1">
+          <p class="font-bold text-slate-700 dark:text-slate-200" id="modal-gemini-status-title">Đang kiểm tra trạng thái...</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" id="modal-gemini-status-desc">Hệ thống đang kiểm tra kết nối API Key.</p>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <div class="space-y-3">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-bold text-slate-700 dark:text-slate-200">Google Gemini API Key:</label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline font-semibold flex items-center space-x-1">
+              <span>Lấy key miễn phí tại Google AI Studio</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+          <div class="relative">
+            <input type="text" id="input-gemini-api-key" placeholder="Dán mã API Key vào đây (ví dụ: AIzaSy...)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-mono text-xs pr-16 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            <button type="button" onclick="window.AIHub.pasteKeyToInput('input-gemini-api-key')" class="absolute right-1.5 top-1.5 text-[11px] bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg transition-colors flex items-center space-x-1">
+              <i class="fa-regular fa-paste text-[10px]"></i>
+              <span>Dán</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Key được lưu an toàn trong file <code>.env</code> của máy chủ dự án và không chia sẻ ra ngoài.</p>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 dark:text-slate-200 block mb-1">Mô hình AI (Model):</label>
+          <select id="select-gemini-model" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs">
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Khuyên dùng - Nhanh, thông minh, ổn định)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Thế hệ mới - Đột phá tốc độ)</option>
+            <option value="gemini-1.5-pro">gemini-1.5-pro (Mô hình chuyên sâu)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex space-x-2">
+          <button type="button" onclick="window.AIHub.closeKeyModal()" class="px-3.5 py-2 rounded-xl text-slate-400 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800">Đóng</button>
+          <button type="button" id="btn-save-gemini-key" onclick="window.AIHub.saveGeminiKey()" class="px-5 py-2 rounded-xl text-white font-bold bg-sky-600 hover:bg-sky-700 shadow-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Kiểm Tra & Kích Hoạt</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/chart_service.js"></script>
+  <script src="/static/js/ai_hub.js"></script>
+  <script src="/static/js/app.js"></script>
+  <!-- ==================== MODAL TRA CỨU ĐƠN HÀNG DÀNH CHO KHÁCH (MAGIC LINK & PHONE LOOKUP) ==================== -->
+  <div id="guest-tracking-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden animate-fade-in text-xs max-h-[90vh] flex flex-col">
+      <!-- Modal Header -->
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/40">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-receipt text-sm"></i>
+          </span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Tra Cứu Tiến Độ Đơn Đặt Tour & Thanh Toán</h3>
+            <p class="text-[11px] text-slate-500">Xem biên lai, số tiền đã cọc và chuyển khoản không cần đăng nhập</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('guest-tracking-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-5 overflow-y-auto space-y-4 flex-1">
+        <!-- Sub-view 1: Form tra cứu (nếu chưa có mã hoặc muốn tìm đơn khác) -->
+        <div id="tracking-search-form" class="space-y-3 bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Mã đặt chỗ / Yêu cầu:</label>
+              <input type="text" id="track-input-code" placeholder="VD: REQ-202610... hoặc BK-..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-mono font-bold uppercase focus:ring-1 focus:ring-sky-500" />
+            </div>
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Số điện thoại hoặc Email:</label>
+              <input type="text" id="track-input-contact" placeholder="Số điện thoại hoặc email đã đặt" class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-sky-500" />
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-[11px]">
+            <button type="button" onclick="window.App.toggleForgotBookingMode()" class="text-sky-600 dark:text-sky-400 hover:underline font-semibold flex items-center space-x-1">
+              <i class="fa-regular fa-envelope text-xs"></i>
+              <span id="btn-toggle-forgot-label">Quên mã đặt tour? Gửi lại qua Gmail</span>
+            </button>
+            <button onclick="window.App.submitGuestTrackingSearch()" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs flex items-center space-x-1.5 shadow-sm transition-all">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              <span>Tra Cứu Ngay</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading Indicator -->
+                <!-- Sub-view: Quên mã - Nhập Gmail để nhận lại toàn bộ danh sách đơn -->
+        <div id="tracking-forgot-box" class="hidden space-y-2.5 bg-sky-50 dark:bg-sky-950/40 p-3.5 rounded-2xl border border-sky-200 dark:border-sky-800 text-xs">
+          <div class="flex items-center space-x-1.5 text-sky-800 dark:text-sky-300 font-bold">
+            <i class="fa-regular fa-envelope"></i>
+            <span>Tìm Lại Đơn Đặt Tour Bằng Gmail</span>
+          </div>
+          <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+            Nếu bạn không nhớ Mã đặt chỗ, hãy nhập địa chỉ Gmail/Email đã dùng khi đặt tour. Hệ thống sẽ tự động gửi danh sách các đơn hàng và liên kết tra cứu một chạm vào hòm thư của bạn:
+          </p>
+          <div class="flex gap-2">
+            <input type="email" id="track-forgot-email" placeholder="Nhập địa chỉ Gmail của bạn..." class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-sky-500" />
+            <button id="btn-submit-forgot-email" onclick="window.App.submitResendTrackingEmail()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl text-xs whitespace-nowrap shadow-sm transition-all">
+              Gửi Về Gmail
+            </button>
+          </div>
+          <div id="track-forgot-msg" class="hidden p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950/50 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 mt-1"></div>
+        </div>
+
+        <div id="tracking-loading" class="hidden py-8 text-center text-slate-400">
+          <i class="fa-solid fa-circle-notch fa-spin text-2xl text-sky-500"></i>
+          <p class="text-xs mt-2 font-medium">Đang đối soát thông tin đơn hàng từ máy chủ...</p>
+        </div>
+
+        <!-- Error Message Box -->
+        <div id="tracking-error" class="hidden p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs">
+          <!-- Text dynamically inserted -->
+        </div>
+
+        <!-- Sub-view 2: Chi tiết đơn hàng & Tiến trình thanh toán -->
+        <div id="tracking-result-box" class="hidden space-y-4">
+          <!-- Header Card -->
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm space-y-2">
+            <div class="flex flex-wrap justify-between items-start gap-2">
+              <div>
+                <span id="track-res-badge-status" class="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-extrabold bg-sky-100 text-sky-700">CHỜ XÁC NHẬN</span>
+                <h4 id="track-res-tour-title" class="font-extrabold text-sm text-slate-900 dark:text-slate-100 mt-1">Tour du lịch</h4>
+              </div>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400 block">Mã đơn đặt tour</span>
+                <span id="track-res-code" class="font-mono font-bold text-sky-600 dark:text-sky-400 text-sm">BK-XXXX</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-2 border-t border-slate-100 dark:border-slate-700 text-[11px]">
+              <div>
+                <span class="text-slate-400 block">Khởi hành:</span>
+                <strong id="track-res-dep-date" class="text-slate-700 dark:text-slate-200">--/--/----</strong>
+              </div>
+              <div>
+                <span class="text-slate-400 block">Số lượng khách:</span>
+                <strong id="track-res-num-people" class="text-slate-700 dark:text-slate-200">1 khách</strong>
+              </div>
+              <div>
+                <span class="text-slate-400 block">Người đặt:</span>
+                <strong id="track-res-cust-name" class="text-slate-700 dark:text-slate-200">Khách hàng</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Financial Breakdown & Progress -->
+          <div class="bg-gradient-to-br from-slate-50 to-slate-100/60 dark:from-slate-800/60 dark:to-slate-800/30 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-700 dark:text-slate-200">Tiến Độ Thanh Toán Đặt Cọc</span>
+              <span id="track-res-percent" class="font-black text-sky-600 dark:text-sky-400">0%</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+              <div id="track-res-progress-bar" class="bg-sky-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <!-- 3 Financial Cards -->
+            <div class="grid grid-cols-3 gap-2 pt-1 text-center">
+              <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 block">Tổng tiền</span>
+                <span id="track-res-total" class="font-bold text-slate-800 dark:text-slate-100 text-xs">0 đ</span>
+              </div>
+              <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 block">Đã thanh toán</span>
+                <span id="track-res-paid" class="font-bold text-emerald-600 dark:text-emerald-400 text-xs">0 đ</span>
+              </div>
+              <div class="bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 block">Còn thiếu</span>
+                <span id="track-res-remaining" class="font-bold text-rose-600 dark:text-rose-400 text-xs">0 đ</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VietQR Box (Hiển thị nếu còn thiếu tiền) -->
+          <div id="track-vietqr-box" class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 text-center space-y-3">
+            <div class="flex items-center justify-center space-x-1.5 text-emerald-800 dark:text-emerald-300 font-bold">
+              <i class="fa-solid fa-qrcode text-sm"></i>
+              <span>Quét Mã VietQR Chuyển Khoản Nhanh 24/7</span>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-300">Quét mã bằng bất kỳ App Ngân hàng nào để tự động điền đúng số tiền và cú pháp:</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-1">
+              <img id="track-vietqr-img" src="" alt="Mã VietQR" class="w-40 h-40 bg-white p-2 rounded-xl border border-emerald-300 dark:border-emerald-700 shadow-sm object-contain" />
+              <div class="text-left text-[11px] space-y-1.5 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex-1 max-w-xs">
+                <div><strong>Ngân hàng:</strong> <span id="track-qr-bank">MB Bank</span></div>
+                <div><strong>Số tài khoản:</strong> <span id="track-qr-acc" class="font-mono font-bold">0333388888</span></div>
+                <div><strong>Chủ tài khoản:</strong> <span id="track-qr-name">CONG TY DU LICH VIETJOURNEY</span></div>
+                <div><strong>Số tiền:</strong> <span id="track-qr-amount" class="text-emerald-600 font-bold">0 đ</span></div>
+                <div class="pt-1 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <div><strong>Nội dung CK:</strong> <span id="track-qr-content" class="font-mono font-bold text-amber-600">VJ BK...</span></div>
+                  <button onclick="window.App.copyTrackQrContent()" class="text-[10px] text-sky-600 dark:text-sky-400 hover:underline">Sao chép</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment History List -->
+          <div class="space-y-2">
+            <h5 class="font-bold text-slate-700 dark:text-slate-300 text-xs">Lịch Sử Các Đợt Thanh Toán Đã Ghi Nhận</h5>
+            <div id="track-payments-list" class="space-y-1.5">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 flex justify-between items-center">
+        <span class="text-[11px] text-slate-400">Hỗ trợ hotline: <strong>1900 6868</strong></span>
+        <button onclick="window.App.closeModal('guest-tracking-modal')" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs transition-colors">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

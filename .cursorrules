@@ -1,0 +1,69 @@
+# ==============================================================================
+# VIETJOURNEY AI — CURSOR & AI-NATIVE VIBE CODING SYSTEM RULES (.cursorrules)
+# ==============================================================================
+# This file governs all AI-assisted code generation, modifications, refactoring,
+# and testing in this repository. Follow all directives strictly.
+
+[PROJECT CONTEXT]
+Project Name: VietJourney Tour Management & AI Assistant Hub
+Domain: Commercial Tour Operating, Booking, Departure Scheduling & AI Concierge
+Stack: 
+  - Backend: Python 3.10+, FastAPI, SQLAlchemy 2.0, Pydantic v2
+  - Database: SQLite (default dev/test) / MySQL (production compatible)
+  - Frontend: Vanilla Modern JS (ES6+), HTML5, TailwindCSS (compiled locally in vendor/)
+  - AI Engine: Google Gemini API (gemini-1.5-flash / gemini-2.0-flash / fallback rule-based)
+  - Email: Asynchronous SMTP (RFC-compliant headers, VietQR deposit invoice, Magic Track link)
+
+[DIRECTORY MAP & ARCHITECTURE]
+- `backend/app/`
+  - `main.py`: FastAPI app initialization, CORS, error handlers, static mounting.
+  - `config.py`: Pydantic settings loading from `.env`.
+  - `database.py`: SQLAlchemy engine, session maker, Base class.
+  - `models.py`: SQLAlchemy declarative models with constraints & relationships.
+  - `schemas.py`: Pydantic validation models for Request/Response.
+  - `crud.py`: Transactional core business logic (decorated with @_transactional).
+  - `auth.py`: JWT token generation, role verification, password hashing.
+  - `email_service.py`: Asynchronous SMTP mailer with VietQR & Magic Link templates.
+  - `routers/`: Modular API endpoints (tours, departures, bookings, payments, ai, etc.).
+- `backend/tests/`: Pytest automated test suites.
+- `frontend/`: Single Page Application (SPA) structure.
+  - `home.html`, `index.html`, `bookings.html`, `departures.html`, `tours.html`, `ai.html`, etc.
+  - `js/app.js`: Core client controller, JWT token management, API fetchers, tracking modal.
+  - `css/`: Tailwind input and custom CSS.
+  - `vendor/`: Bundled offline dependencies (TailwindCSS, Chart.js, Lucide icons, DOMPurify).
+- `skill/`: Standardized Agent Skills & Context Engineering specifications (00 to 07).
+- `docs/`: SDLC reports, architecture diagrams, user guides, and reference material.
+- `scripts/`: Dev utilities, database setup, migrations, UI smoke tests.
+
+[STRICT BUSINESS INVARIANTS]
+1. Booking Lifecycle:
+   - WAITING_CONFIRM: Initial guest booking (does NOT reserve available_slots).
+   - PENDING: Consultant/Admin confirmed request (deducts available_slots, awaits deposit).
+   - DEPOSITED: Customer paid at least 30% of total amount.
+   - CONFIRMED: Customer fully paid 100% of total amount.
+   - COMPLETED: Tour departure finished successfully.
+   - CANCELLED: Cancelled with refund rules (15+ days: 100%, 7-14 days: 70%, 3-6 days: 50%, <3 days: 0%).
+2. Slot Integrity (No Overbooking):
+   - Always verify `departure.available_slots >= num_people` before confirming.
+   - Locking: Use database transactions and pessimistic locking when reserving slots.
+3. Monetary Precision:
+   - All monetary fields must use exact integer VNĐ or `Decimal(18,0)` with round-half-up.
+   - Never use floating point math for prices or payments.
+4. Security & Permissions:
+   - Passwords must be hashed with bcrypt.
+   - Customer tracking uses UUID4 `access_token` for public Magic Links.
+   - Sensitive endpoints require appropriate JWT roles (`admin`, `consultant`, `accountant`, `guide`).
+
+[CODING CONVENTIONS]
+1. Python / FastAPI:
+   - Always include type hints for all arguments and return values.
+   - Do not use bare `except:` blocks; always catch specific exceptions and log with `logger`.
+   - Keep business logic in `crud.py` or dedicated services; keep `routers/` thin.
+   - When modifying routes, define static sub-routes (e.g. `/magic-track`) BEFORE dynamic parameter routes (e.g. `/{booking_id}`).
+2. Frontend:
+   - Sanitize all dynamic HTML using DOMPurify before rendering.
+   - Use `data-action` or standard event listeners rather than inline dynamic executable strings.
+   - Maintain mobile responsiveness and dark mode compatibility with TailwindCSS classes.
+3. Testing:
+   - Every new feature or bug fix must have a corresponding test in `backend/tests/`.
+   - Run `pytest backend/tests -q` to verify that 100% of tests pass before finishing any task.

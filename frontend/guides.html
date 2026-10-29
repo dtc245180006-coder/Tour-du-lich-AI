@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+  <script src="/static/vendor/purify.min.js"></script>
+  <script src="/static/js/ui_safety.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Huong dan vien & Diem so | VietJourney AI</title>
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/static/vendor/tailwind.css">
+  
+  <!-- FontAwesome Icons & Chart.js -->
+  <link rel="stylesheet" href="/static/vendor/css/all.min.css">
+  <script src="/static/vendor/chart.umd.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-100 dark:bg-[#030712] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans antialiased transition-colors duration-200">
+
+  <div class="flex h-screen overflow-hidden">
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside id="main-sidebar" class="w-72 bg-white dark:bg-[#0c1322] border-r border-slate-200 dark:border-slate-800/80 flex flex-col shrink-0 z-30 transition-colors duration-200">
+      
+      <!-- Brand Header -->
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800/80">
+        <div class="brand-box rounded-2xl p-3 flex items-center space-x-3 backdrop-blur-md">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-500 to-cyan-400 p-0.5 shadow-md flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-plane-departure text-white text-lg"></i>
+          </div>
+          <div class="overflow-hidden">
+            <h1 class="font-extrabold text-base tracking-wider text-slate-900 dark:text-white brand-text-glow flex items-center">
+              VIETJOURNEY <span class="text-sky-600 dark:text-sky-400 text-xs ml-1.5 px-1.5 py-0.2 bg-sky-500/10 border border-sky-400/30 rounded">AI</span>
+            </h1>
+            <p class="text-[11px] text-slate-500 dark:text-cyan-300/80 truncate">Hệ Thống Tour Thông Minh</p>
+          </div>
+        </div>
+
+        <!-- Language & Currency -->
+        <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+          <span>Ngôn ngữ: <strong class="text-slate-700 dark:text-slate-200">Tiếng Việt</strong></span>
+          <span>Tiền tệ: <strong class="text-slate-700 dark:text-slate-200">VND (đ)</strong></span>
+        </div>
+
+        <!-- User Role / Mode Status Box -->
+        <div class="mt-3 bg-slate-50 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl p-3 text-xs">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-slate-500 dark:text-slate-400">Trạng thái:</span>
+            <span id="sidebar-auth-status" class="font-bold text-slate-700 dark:text-slate-300">Khách vãng lai</span>
+          </div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-slate-500 dark:text-slate-400">Vai trò:</span>
+            <span id="sidebar-role-name" class="font-bold text-sky-600 dark:text-emerald-400 text-[11px]">Chưa đăng nhập</span>
+          </div>
+          <!-- Action Button in Sidebar -->
+          <div id="sidebar-auth-btn-container" class="pt-2 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <button onclick="window.App.openLoginModal()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition-colors flex items-center justify-center space-x-1.5 shadow-sm">
+              <i class="fa-solid fa-right-to-bracket text-[11px]"></i>
+              <span>Đăng Nhập Hệ Thống</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links (Dynamic by Role) -->
+      <div class="flex-1 overflow-y-auto px-3 py-4 space-y-4 text-xs">
+        
+        <!-- Khối Menu Chung (Ai cũng thấy) -->
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Khám Phá & Đặt Tour</span>
+          <div class="space-y-0.5">
+            <a href="/home" data-tab="home" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-white bg-sky-600 shadow-sm cursor-pointer">
+              <i class="fa-solid fa-house w-4 text-center"></i>
+              <span>Trang Chủ Tour</span>
+            </a>
+            <a href="/guides" data-tab="guides" class="sidebar-nav-item w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-user-tie w-4 text-center text-purple-500"></i>
+                <span>Hướng Dẫn Viên</span>
+              </div>
+              
+            </a>
+            <a href="/ai" data-tab="ai" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <i class="fa-solid fa-robot w-4 text-center text-cyan-500"></i>
+              <span>Trợ Lý AI Gemini</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Khối Menu Dành Riêng Cho Nhân Viên & Admin -->
+        <div id="sidebar-staff-menu" class="hidden space-y-4">
+          
+          <!-- Nghiệp vụ Tư vấn & Vận hành -->
+          <div>
+            <span class="text-[10px] font-bold text-sky-600 dark:text-sky-400 tracking-wider uppercase px-3 flex items-center justify-between mb-1">
+              <span>Nghiệp Vụ Nhân Viên</span>
+              <span id="sidebar-queue-badge" class="hidden text-[9px] bg-amber-500 text-white font-bold px-1.5 py-0.2 rounded-full">0</span>
+            </span>
+            <div class="space-y-0.5">
+              <!-- HÀNG CHỜ TƯ VẤN (CỰC KỲ QUAN TRỌNG CHO NHÂN VIÊN TƯ VẤN) -->
+              <a href="/queue" data-tab="queue" class="sidebar-nav-item consultant-access w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <div class="flex items-center space-x-3">
+                  <i class="fa-solid fa-inbox w-4 text-center text-amber-500"></i>
+                  <span>Hàng Chờ Tư Vấn</span>
+                </div>
+                <span id="queue-counter-chip" class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-300 px-2 py-0.5 rounded-full">0 đơn</span>
+              </a>
+
+              <a href="/tours" data-tab="tours" class="sidebar-nav-item consultant-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-map-location-dot w-4 text-center text-sky-500"></i>
+                <span>Quản Lý Tour</span>
+              </a>
+
+              <a href="/departures" data-tab="departures" class="sidebar-nav-item consultant-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-calendar-days w-4 text-center text-indigo-500"></i>
+                <span>Lịch Khởi Hành & Chỗ</span>
+              </a>
+
+              <a href="/bookings" data-tab="bookings" class="sidebar-nav-item staff-booking-access w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-ticket w-4 text-center text-emerald-500"></i>
+                <span>Đặt Chỗ Đã Xác Nhận</span>
+              </a>
+
+              <a href="/feedbacks" data-tab="feedbacks" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-comment-dots w-4 text-center text-rose-500"></i>
+                <span>Phản Hồi & Đánh Giá</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Nghiệp vụ Kế toán -->
+          <div id="sidebar-accounting-group" class="accountant-access">
+            <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Kế Toán & Doanh Thu</span>
+            <div class="space-y-0.5">
+              <a href="/payments" data-tab="payments" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-receipt w-4 text-center text-emerald-500"></i>
+                <span>Kế Toán & Đặt Cọc</span>
+              </a>
+              <a href="/analytics" data-tab="analytics" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-chart-line w-4 text-center text-sky-500"></i>
+                <span>Thống Kê Doanh Thu</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- DÀNH RIÊNG CHO ADMIN: QUẢN LÝ TÀI KHOẢN & PHÂN QUYỀN -->
+          <div id="sidebar-admin-group" class="admin-access">
+            <span class="text-[10px] font-bold text-rose-600 dark:text-rose-400 tracking-wider uppercase px-3 block mb-1">Quản Trị Hệ Thống (Admin)</span>
+            <div class="space-y-0.5">
+              <a href="/users" data-tab="users" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i class="fa-solid fa-users-gear w-4 text-center text-rose-500"></i>
+                <span>Quản Lý Tài Khoản (RBAC)</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Báo cáo SDLC & API Documentation -->
+        <div>
+          <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Tài Liệu & Báo Cáo</span>
+          <div class="space-y-0.5">
+            <a href="/sdlc" data-tab="sdlc" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+              <i class="fa-solid fa-book-bookmark w-4 text-center text-indigo-400"></i>
+              <span>Tài Liệu SDLC (KT1-KT3)</span>
+            </a>
+            <a href="/docs" target="_blank" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
+              <span>Tài Liệu API (Swagger)</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer User Info -->
+      <div class="p-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex items-center justify-between">
+        <div class="flex items-center space-x-2.5 overflow-hidden">
+          <div id="footer-user-avatar" class="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 text-xs font-bold">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="overflow-hidden">
+            <p id="footer-user-name" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Khách Vãng Lai</p>
+            <p id="footer-user-role" class="text-[10px] text-slate-500 truncate">Khách</p>
+          </div>
+        </div>
+        <button id="footer-logout-btn" onclick="window.App.logout()" class="hidden text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors" title="Đăng xuất">
+          <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT AREA ==================== -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      
+      <!-- Top Header -->
+      <header class="h-16 bg-white dark:bg-[#0c1322] border-b border-slate-200 dark:border-slate-800 px-6 flex items-center justify-between z-20 shrink-0 transition-colors duration-200">
+        <div class="flex items-center space-x-4">
+          <button id="sidebar-toggle-btn" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+            <i class="fa-solid fa-bars text-base"></i>
+          </button>
+          
+          <!-- Stat Pill (Chỉ Admin & Kế toán) -->
+          <div id="topbar-revenue-pill" class="accountant-access flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl text-xs" style="display: none;">
+            <span class="text-slate-500 dark:text-slate-400">Doanh thu ghi nhận:</span>
+            <span id="topbar-stat-revenue" class="font-extrabold text-sky-600 dark:text-sky-400">0 đ</span>
+          </div>
+          <!-- Hotline hỗ trợ (Dành cho Khách vãng lai & Tư vấn viên không xem doanh thu) -->
+          <div id="topbar-guest-pill" class="non-revenue-access flex items-center space-x-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+            <span class="text-slate-500 dark:text-slate-400"><i class="fa-solid fa-headset text-sky-500 mr-1"></i>Hotline tư vấn:</span>
+            <span class="font-extrabold text-sky-600 dark:text-sky-400">1900 6868</span>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          
+
+          <!-- Light/Dark Mode Switcher -->
+          <button id="theme-toggle-btn" class="p-2 text-slate-600 dark:text-slate-300 hover:text-amber-500 dark:hover:text-sky-400 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Chuyển chế độ Sáng / Tối">
+            <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+          </button>
+
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors">
+              <i class="fa-regular fa-bell text-base"></i>
+              <span id="topbar-notif-dot" class="hidden absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>
+            </button>
+          </div>
+
+          <!-- User Authentication Section in Topbar -->
+          <div id="topbar-auth-section" class="flex items-center pl-2 border-l border-slate-200 dark:border-slate-800">
+            <!-- Nút Đăng Nhập khi chưa đăng nhập -->
+            <button id="topbar-login-btn" onclick="window.App.openLoginModal()" class="flex items-center space-x-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-sm transition-all">
+              <i class="fa-solid fa-right-to-bracket text-xs"></i>
+              <span>Đăng Nhập</span>
+            </button>
+
+            <!-- User Info Dropdown khi đã đăng nhập -->
+            <div id="topbar-user-dropdown" class="hidden relative">
+              <button onclick="document.getElementById('user-dropdown-menu').classList.toggle('hidden')" class="flex items-center space-x-2.5 p-1 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                  <span id="topbar-user-initial">A</span>
+                </div>
+                <div class="text-left hidden sm:block">
+                  <p id="topbar-user-name" class="text-xs font-bold text-slate-800 dark:text-slate-100">Admin</p>
+                  <p id="topbar-user-role-badge" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">Quản Trị Viên</p>
+                </div>
+                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+              </button>
+
+              <!-- Dropdown Menu -->
+              <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl py-2 z-50 animate-fade-in text-xs">
+                <div class="px-4 py-2 border-b border-slate-100 dark:border-slate-800">
+                  <p class="font-bold text-slate-800 dark:text-slate-200" id="dropdown-full-name">Quản Trị Viên</p>
+                  <p class="text-[10px] text-slate-400" id="dropdown-username">@admin</p>
+                </div>
+                <button onclick="window.App.switchTab('users')" class="admin-access w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center space-x-2">
+                  <i class="fa-solid fa-users-gear text-sky-500"></i>
+                  <span>Quản lý tài khoản</span>
+                </button>
+                <button onclick="window.App.switchTab('queue')" class="consultant-access w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center space-x-2">
+                  <i class="fa-solid fa-inbox text-amber-500"></i>
+                  <span>Hàng chờ tư vấn</span>
+                </button>
+                <div class="border-t border-slate-100 dark:border-slate-800 my-1"></div>
+                <button onclick="window.App.logout()" class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center space-x-2 font-semibold">
+                  <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Scrollable Main Content Body -->
+      <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50 dark:bg-[#030712] transition-colors duration-200">
+
+<section id="view-guides" class="tab-content-view space-y-5">
+          <!-- Header & Action Button -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <div>
+              <div class="flex items-center space-x-2.5">
+                <span class="w-9 h-9 rounded-xl bg-sky-500/10 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-base shadow-sm">
+                  <i class="fa-solid fa-id-card-clip"></i>
+                </span>
+                <div>
+                  <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Quản Lý Đội Ngũ Hướng Dẫn Viên</h2>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">Hồ sơ chuyên môn, ngoại ngữ, lịch trình dẫn đoàn và điều phối phân công tour.</p>
+                </div>
+              </div>
+            </div>
+            
+            <button onclick="window.App.openGuideModal()" class="admin-access admin-only inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-sky-600 to-cyan-600 hover:from-sky-700 hover:to-cyan-700 text-white font-bold rounded-xl shadow-md shadow-sky-600/20 hover:shadow-lg hover:shadow-sky-600/30 active:scale-95 transition-all text-xs shrink-0" style="display: none;">
+              <i class="fa-solid fa-user-plus text-xs"></i>
+              <span>+ Thêm Hướng Dẫn Viên Mới</span>
+            </button>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="bg-white dark:bg-[#0c1322] border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+            <div class="relative flex-1 max-w-md">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+              </span>
+              <input type="text" id="guide-search-input" oninput="window.App.filterGuidesList()" placeholder="Tìm theo họ tên, số điện thoại, ngoại ngữ..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-1.5 overflow-x-auto pb-1 md:pb-0">
+                <button onclick="window.App.setGuideStatusFilter('ALL')" id="guide-filter-ALL" class="guide-filter-btn px-3 py-1.5 rounded-xl font-bold bg-sky-600 text-white shadow-sm transition-all text-xs">Tất cả</button>
+                <button onclick="window.App.setGuideStatusFilter('AVAILABLE')" id="guide-filter-AVAILABLE" class="guide-filter-btn px-3 py-1.5 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs">Sẵn sàng (Rảnh)</button>
+                <button onclick="window.App.setGuideStatusFilter('ON_TOUR')" id="guide-filter-ON_TOUR" class="guide-filter-btn px-3 py-1.5 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs">Đang dẫn tour</button>
+                <button onclick="window.App.setGuideStatusFilter('OFF')" id="guide-filter-OFF" class="guide-filter-btn px-3 py-1.5 rounded-xl font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs">Nghỉ phép</button>
+              </div>
+
+              <!-- View Mode Toggle: Table / Cards -->
+              <div class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl space-x-1 border border-slate-200 dark:border-slate-700">
+                <button id="guide-view-btn-table" onclick="window.App.setGuideViewMode('table')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-300 shadow-sm transition-all flex items-center space-x-1" title="Xem dạng bảng">
+                  <i class="fa-solid fa-table-list"></i>
+                  <span>Bảng</span>
+                </button>
+                <button id="guide-view-btn-cards" onclick="window.App.setGuideViewMode('cards')" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center space-x-1" title="Xem dạng thẻ">
+                  <i class="fa-solid fa-grip"></i>
+                  <span>Thẻ</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bảng Danh Sách Hướng Dẫn Viên (Table View) -->
+          <div id="guides-table-container" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/40 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <th class="py-3.5 px-4">Hướng dẫn viên</th>
+                    <th class="py-3.5 px-4">Số điện thoại</th>
+                    <th class="py-3.5 px-4">Email</th>
+                    <th class="py-3.5 px-4">Ngoại ngữ</th>
+                    <th class="py-3.5 px-4 text-center">Kinh nghiệm</th>
+                    <th class="py-3.5 px-4 text-center">Đánh giá</th>
+                    <th class="py-3.5 px-4 text-center">Trạng thái</th>
+                    <th class="py-3.5 px-4 text-right">Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody id="guides-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+                  <!-- Rendered by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Cards Grid View -->
+          <div id="guides-cards-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </section>
+
+</main>
+    </div>
+  </div>
+
+  <!-- ==================== FLOATING AI BUTTON ==================== -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button id="floating-ai-btn" class="floating-ai-btn w-14 h-14 rounded-full bg-gradient-to-tr from-sky-500 via-cyan-400 to-indigo-500 text-white shadow-xl flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-all">
+      <i class="fa-solid fa-headset"></i>
+    </button>
+  </div>
+
+  <!-- FLOATING AI DRAWER -->
+  <div id="floating-ai-drawer" class="hidden fixed bottom-24 right-6 w-96 max-w-[90vw] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl z-50 overflow-hidden flex flex-col h-[520px] animate-fade-in text-xs">
+    <div class="bg-gradient-to-r from-sky-600 to-cyan-600 p-4 text-white flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa-solid fa-robot text-lg"></i>
+        <div>
+          <h4 class="font-bold text-xs">Trợ Lý Tư Vấn VietJourney AI</h4>
+          <span class="text-[10px] text-cyan-200">Gemini Grounded • Trực tuyến 24/7</span>
+        </div>
+      </div>
+      <button onclick="window.App.toggleFloatingAI()" class="text-white hover:text-slate-200 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <div id="quick-ai-messages" class="flex-1 p-3 overflow-y-auto space-y-3">
+      <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl text-slate-800 dark:text-slate-200 leading-relaxed">
+        Dạ chào bạn! Hãy nói cho em biết bạn muốn đi đâu, mấy ngày và ngân sách bao nhiêu để em gợi ý các tour còn chỗ tốt nhất nhé!
+      </div>
+    </div>
+
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2">
+      <input type="text" id="quick-ai-input" placeholder="Hỏi AI tour..." class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-slate-200 focus:outline-none" onkeypress="if(event.key==='Enter') window.App.sendFloatingAIMessage();" />
+      <button id="quick-ai-send" onclick="window.App.sendFloatingAIMessage()" class="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-xl font-bold">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- MODAL ĐĂNG NHẬP (LOGIN MODAL) -->
+    <!-- MODAL QUẢN LÝ KHÁCH HÀNG CHUYẾN ĐI & XỬ LÝ HỦY KHẨN CẤP -->
+  <div id="departure-customers-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl p-6 space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-800 dark:text-slate-100" id="dep-cust-modal-title">Danh Sách Khách Hàng Chuyến Đi</h3>
+            <p class="text-[11px] text-slate-500" id="dep-cust-modal-subtitle">Liên hệ khách hàng & xử lý điều phối / hủy chuyến khẩn cấp</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('departure-customers-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Quick Action Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center space-x-2 text-xs">
+          <span class="font-bold text-slate-700 dark:text-slate-200" id="dep-cust-count-badge">Tổng: 0 khách</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="btn-copy-cust-phones" onclick="window.App.copyAllCustomerPhones()" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center space-x-1.5 transition-colors" title="Sao chép toàn bộ số điện thoại để gửi SMS/Zalo">
+            <i class="fa-solid fa-copy"></i>
+            <span>Sao chép tất cả SĐT</span>
+          </button>
+          <button id="btn-emergency-cancel-dep" class="admin-access px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-sm transition-colors" title="Hủy chuyến khẩn cấp do thiên tai/sự cố, tự động hoàn tiền 100% cho khách">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Hủy Chuyến Khẩn Cấp & Hoàn 100% Tiền</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table of Customers -->
+      <div class="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+              <th class="py-2.5 px-3">Mã đơn</th>
+              <th class="py-2.5 px-3">Khách hàng</th>
+              <th class="py-2.5 px-3">Số điện thoại</th>
+              <th class="py-2.5 px-3">Số khách</th>
+              <th class="py-2.5 px-3">Tổng tiền</th>
+              <th class="py-2.5 px-3">Đã đóng</th>
+              <th class="py-2.5 px-3">Trạng thái</th>
+              <th class="py-2.5 px-3 text-right">Liên hệ</th>
+            </tr>
+          </thead>
+          <tbody id="dep-customers-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <!-- Rendered dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="window.App.closeModal('departure-customers-modal')" class="px-5 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-md shadow-2xl p-6 space-y-5 animate-fade-in text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-sm text-slate-900 dark:text-slate-100">Đăng Nhập Hệ Thống</h3>
+            <p class="text-[11px] text-slate-500">Dành cho Quản trị viên, Tư vấn viên & Kế toán</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('login-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3.5">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Tên đăng nhập</label>
+          <input type="text" id="login-username" placeholder="Nhập admin, tuvan hoặc ketoan" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-sky-500" />
+        </div>
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Mật khẩu</label>
+          <input type="password" id="login-password" placeholder="Nhập mật khẩu (vd: admin123)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-sky-500" onkeypress="if(event.key==='Enter') window.App.submitLogin();" />
+        </div>
+
+        <button onclick="window.App.submitLogin()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 rounded-xl shadow-md transition-colors text-xs flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          <span>Xác Nhận Đăng Nhập</span>
+        </button>
+
+        <!-- Quick Demo Login Buttons -->
+        <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2 text-center">Đăng nhập nhanh 1 chạm (Tài khoản mẫu):</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="window.App.quickLoginDemo('admin', 'admin123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-sky-50 dark:hover:bg-sky-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Admin</span>
+              <span class="text-[10px] text-sky-600">Quản lý</span>
+            </button>
+            <button onclick="window.App.quickLoginDemo('tuvan', 'tuvan123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Tư Vấn</span>
+              <span class="text-[10px] text-amber-600">Sales</span>
+            </button>
+            <button onclick="window.App.quickLoginDemo('ketoan', 'ketoan123')" class="bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-700 rounded-xl p-2 text-center transition-colors">
+              <span class="block font-bold text-slate-800 dark:text-slate-200">Kế Toán</span>
+              <span class="text-[10px] text-emerald-600">Thu chi</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL THÊM / SỬA HƯỚNG DẪN VIÊN ==================== -->
+  <div id="guide-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 animate-fade-in text-xs max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-cyan-500 text-white flex items-center justify-center font-bold shadow-sm">
+            <i class="fa-solid fa-id-badge text-sm"></i>
+          </div>
+          <div>
+            <h3 id="guide-modal-title" class="font-extrabold text-sm text-slate-900 dark:text-slate-100">Thêm Hướng Dẫn Viên Mới</h3>
+            <p class="text-[11px] text-slate-500">Cập nhật hồ sơ năng lực và tình trạng công tác</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('guide-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="guide-form-id" value="" />
+      
+      <div class="space-y-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Họ và tên (*):</label>
+            <input type="text" id="guide-form-fullname" placeholder="Nguyễn Văn A" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Số điện thoại (*):</label>
+            <input type="text" id="guide-form-phone" placeholder="0901234567" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Email liên hệ:</label>
+            <input type="email" id="guide-form-email" placeholder="hdv@vietjourney.vn" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Trạng thái công tác:</label>
+            <select id="guide-form-status" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
+              <option value="AVAILABLE">Sẵn sàng (Đang rảnh)</option>
+              <option value="ON_TOUR">Đang dẫn tour (Bận)</option>
+              <option value="OFF">Nghỉ phép / Tạm ngưng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ngoại ngữ thông thạo:</label>
+            <input type="text" id="guide-form-languages" placeholder="Tiếng Việt, Tiếng Anh..." value="Tiếng Việt, Tiếng Anh" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Kinh nghiệm (năm):</label>
+              <input type="number" id="guide-form-experience" min="0" max="40" value="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-center font-bold text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            </div>
+            <div>
+              <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Đánh giá (1 - 5 điểm):</label>
+              <input type="number" id="guide-form-rating" min="1" max="5" step="0.1" value="4.8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-center font-bold text-amber-500 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ghi chú chuyên môn & Tuyến tour phụ trách:</label>
+          <textarea id="guide-form-notes" rows="3" placeholder="Ví dụ: Chuyên tuyến Tây Bắc, am hiểu văn hóa vùng cao, nhiệt tình, có chứng chỉ..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button type="button" onclick="window.App.closeModal('guide-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Hủy</button>
+        <button type="button" onclick="window.App.submitGuideForm()" id="btn-save-guide" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 shadow-md shadow-sky-600/20 hover:shadow-lg transition-all flex items-center space-x-1.5">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span id="btn-save-guide-text">Lưu Hướng Dẫn Viên</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CẤU HÌNH GOOGLE GEMINI API KEY -->
+  <div id="modal-gemini-config" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-5 animate-fade-in text-xs">
+      <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <span class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-sm shadow-md">
+            <i class="fa-solid fa-key"></i>
+          </span>
+          <div>
+            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">Cấu Hình Google Gemini API Key</h3>
+            <p class="text-[11px] text-slate-400">Kích hoạt Generative AI thời gian thực trên đám mây của Google</p>
+          </div>
+        </div>
+        <button onclick="window.AIHub.closeKeyModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Current Status Alert -->
+      <div id="modal-gemini-status-alert" class="p-3.5 rounded-xl border bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 flex items-start space-x-3">
+        <i class="fa-solid fa-circle-info text-sky-500 text-sm mt-0.5"></i>
+        <div class="flex-1">
+          <p class="font-bold text-slate-700 dark:text-slate-200" id="modal-gemini-status-title">Đang kiểm tra trạng thái...</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5" id="modal-gemini-status-desc">Hệ thống đang kiểm tra kết nối API Key.</p>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <div class="space-y-3">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="font-bold text-slate-700 dark:text-slate-200">Google Gemini API Key:</label>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:underline font-semibold flex items-center space-x-1">
+              <span>Lấy key miễn phí tại Google AI Studio</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+          <div class="relative">
+            <input type="text" id="input-gemini-api-key" placeholder="Dán mã API Key vào đây (ví dụ: AIzaSy...)" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-mono text-xs pr-16 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            <button type="button" onclick="window.AIHub.pasteKeyToInput('input-gemini-api-key')" class="absolute right-1.5 top-1.5 text-[11px] bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-lg transition-colors flex items-center space-x-1">
+              <i class="fa-regular fa-paste text-[10px]"></i>
+              <span>Dán</span>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Key được lưu an toàn trong file <code>.env</code> của máy chủ dự án và không chia sẻ ra ngoài.</p>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 dark:text-slate-200 block mb-1">Mô hình AI (Model):</label>
+          <select id="select-gemini-model" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs">
+            <option value="gemini-1.5-flash">gemini-1.5-flash (Khuyên dùng - Nhanh, thông minh, ổn định)</option>
+            <option value="gemini-2.0-flash">gemini-2.0-flash (Thế hệ mới - Đột phá tốc độ)</option>
+            <option value="gemini-1.5-pro">gemini-1.5-pro (Mô hình chuyên sâu)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex space-x-2">
+          <button type="button" onclick="window.AIHub.closeKeyModal()" class="px-3.5 py-2 rounded-xl text-slate-400 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800">Đóng</button>
+          <button type="button" id="btn-save-gemini-key" onclick="window.AIHub.saveGeminiKey()" class="px-5 py-2 rounded-xl text-white font-bold bg-sky-600 hover:bg-sky-700 shadow-sm flex items-center space-x-1.5">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Kiểm Tra & Kích Hoạt</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL THÊM / SỬA ĐỢT KHỞI HÀNH & PHÂN CÔNG HDV (DEPARTURE MODAL) -->
+  <div id="departure-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl w-full max-w-lg shadow-2xl p-6 space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto text-xs">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+            <i class="fa-solid fa-calendar-days"></i>
+          </div>
+          <div>
+            <h3 id="dep-modal-title" class="font-extrabold text-sm text-slate-900 dark:text-slate-100">Phân Công Tour Cho Hướng Dẫn Viên</h3>
+            <p class="text-[11px] text-slate-500">Thiết lập lịch trình, số lượng chỗ và phân công HDV</p>
+          </div>
+        </div>
+        <button onclick="window.App.closeModal('departure-modal')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="dep-form-id" />
+      <div class="space-y-3.5">
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Chọn tour du lịch (*):</label>
+          <select id="dep-form-tour-id" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-sky-500"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ngày khởi hành (*):</label>
+            <input type="date" id="dep-form-dep-date" onchange="window.App.checkGuideConflictLive()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-sky-500" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ngày về kết thúc (*):</label>
+            <input type="date" id="dep-form-return-date" onchange="window.App.checkGuideConflictLive()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-medium focus:outline-none focus:border-sky-500" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Tổng số chỗ ngồi (*):</label>
+            <input type="number" id="dep-form-total-slots" value="20" min="1" max="200" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-center" />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Giá tour áp dụng (VNĐ, để trống = giá gốc):</label>
+            <input type="number" id="dep-form-price" placeholder="Theo giá gốc tour" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-sky-600" />
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Phân công Hướng dẫn viên:</label>
+          <select id="dep-form-guide-id" onchange="window.App.checkGuideConflictLive()" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-sky-500">
+            <option value="">-- Chưa phân công HDV --</option>
+          </select>
+        </div>
+
+        <!-- HỘP CẢNH BÁO / KIỂM TRA TRÙNG LỊCH HDV THỜI GIAN THỰC -->
+        <div id="dep-guide-conflict-alert" class="hidden p-3 rounded-xl border text-xs">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Trạng thái đợt khởi hành:</label>
+            <select id="dep-form-status" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+              <option value="OPEN">Mở bán (OPEN)</option>
+              <option value="FULL">Hết chỗ (FULL)</option>
+              <option value="RUNNING">Đang khởi hành (RUNNING)</option>
+              <option value="COMPLETED">Đã kết thúc (COMPLETED)</option>
+              <option value="CANCELLED">Hủy đợt (CANCELLED)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Ghi chú chuyến đi:</label>
+            <input type="text" id="dep-form-notes" placeholder="Khởi hành từ sân bay Tân Sơn Nhất..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+        <button onclick="window.App.closeModal('departure-modal')" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400">Hủy</button>
+        <button id="btn-submit-departure" onclick="window.App.submitDepartureForm()" class="px-5 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 shadow-sm flex items-center space-x-1.5">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Xác Nhận Phân Công</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/chart_service.js?v=2.4"></script>
+  <script src="/static/js/ai_hub.js?v=2.4"></script>
+  <script src="/static/js/app.js?v=2.4"></script>
+  <script>
+    // Tự động kích hoạt render bảng HDV khi trang tải xong
+    window.addEventListener('load', function() {
+      if (window.App && typeof window.App.renderGuidesTable === 'function') {
+        window.App.renderGuidesTable();
+      }
+    });
+  </script>
+</body>
+</html>
