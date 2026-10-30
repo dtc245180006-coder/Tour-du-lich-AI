@@ -813,8 +813,7 @@ toggleForgotBookingMode: function() {
       '/guides': 'guides',
       '/feedbacks': 'feedbacks',
       '/analytics': 'analytics',
-      '/users': 'users',
-      '/sdlc': 'sdlc'
+      '/users': 'users'
     };
 
     // Kiểm tra xem trang hiện tại chỉ có 1 view độc lập (standalone page)
@@ -863,8 +862,7 @@ toggleForgotBookingMode: function() {
       'guides': 'Hướng dẫn viên & Điểm số | VietJourney AI',
       'feedbacks': 'Ý kiến & Khảo sát CSAT | VietJourney AI',
       'analytics': 'Báo cáo doanh thu & Vận hành | VietJourney AI',
-      'users': 'Quản lý người dùng & Phân quyền | VietJourney AI',
-      'sdlc': 'Hồ sơ Tài liệu & SDLC | VietJourney AI'
+      'users': 'Quản lý người dùng & Phân quyền | VietJourney AI'
     };
     document.title = titleMap[tabOrRoute] || 'VietJourney AI - Nền tảng Du lịch Thông minh';
   },

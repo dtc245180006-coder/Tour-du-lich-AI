@@ -1,0 +1,67 @@
+================================================================================
+                    DANH SÁCH TÀI KHOẢN ĐĂNG NHẬP HỆ THỐNG
+                           VIETJOURNEY AI (TEST ACCOUNTS)
+================================================================================
+
+Đường dẫn đăng nhập: http://127.0.0.1:8000/login
+(Hoặc mở file login.html / bấm nút "Đăng Nhập" ở góc trên bên phải màn hình)
+
+--------------------------------------------------------------------------------
+1. TÀI KHOẢN QUẢN TRỊ VIÊN CẤP CAO (ADMIN)
+--------------------------------------------------------------------------------
+- Tên đăng nhập (Username) : admin
+- Mật khẩu (Password)      : admin123
+- Họ và tên                : Bùi Văn soppi (Quản Trị Viên)
+- Vai trò (Role)           : ADMIN
+- Quyền hạn hệ thống:
+  + Toàn quyền truy cập mọi phân hệ.
+  + Xem bảng điều khiển KPI, doanh thu thực tế, doanh thu dự tính.
+  + Thêm, sửa, xóa danh mục Tour và Lịch khởi hành.
+  + Quản lý Hướng dẫn viên và điều phối tour.
+  + Quản lý tài khoản người dùng & Phân quyền vai trò (RBAC).
+  + Toàn quyền sử dụng Trung tâm Trí tuệ Nhân tạo (AI Hub).
+
+--------------------------------------------------------------------------------
+2. TÀI KHOẢN NHÂN VIÊN TƯ VẤN (CONSULTANT / SALES)
+--------------------------------------------------------------------------------
+- Tên đăng nhập (Username) : tuvan
+- Mật khẩu (Password)      : tuvan123
+- Họ và tên                : Trần Thị himass (Tư Vấn Viên)
+- Vai trò (Role)           : CONSULTANT
+- Quyền hạn hệ thống:
+  + Tiếp nhận và duyệt các yêu cầu từ Hàng chờ khách vãng lai (Queue).
+  + Tạo đơn đặt chỗ mới cho khách hàng (Booking).
+  + Tra cứu lịch khởi hành, số chỗ còn trống và tình trạng giữ ghế.
+  + Sử dụng Trợ lý AI Gemini để tư vấn tour phù hợp ngân sách cho khách.
+  * Giới hạn: Không được xem báo cáo doanh thu, không được quản lý tài khoản.
+
+--------------------------------------------------------------------------------
+3. TÀI KHOẢN KẾ TOÁN THU CHI & CÔNG NỢ (ACCOUNTANT)
+--------------------------------------------------------------------------------
+- Tên đăng nhập (Username) : ketoan
+- Mật khẩu (Password)      : ketoan123
+- Họ và tên                : Lê Hoàng taanvu (Kế Toán Viên)
+- Vai trò (Role)           : ACCOUNTANT
+- Quyền hạn hệ thống:
+  + Quản lý dòng tiền, theo dõi công nợ các đơn đặt tour.
+  + Xác nhận thanh toán tiền cọc tối thiểu 30% và tất toán 100%.
+  + Xử lý hủy tour và tự động hoàn tiền theo chính sách bậc thang (100% -> 70% -> 50% -> 0%).
+  + Xem báo cáo, biểu đồ doanh thu và lịch sử giao dịch VietQR.
+  * Giới hạn: Không có quyền quản lý tài khoản nhân viên.
+
+--------------------------------------------------------------------------------
+4. TÀI KHOẢN KẾ TOÁN BỔ SUNG (ACCOUNTANT 2)
+--------------------------------------------------------------------------------
+- Tên đăng nhập (Username) : tuvan04
+- Mật khẩu (Password)      : 123
+- Họ và tên                : Phùng Xuân Độ
+- Vai trò (Role)           : ACCOUNTANT
+- Quyền hạn hệ thống: Nghiệp vụ kế toán, thu tiền và công nợ.
+
+================================================================================
+GHI CHÚ HƯỚNG DẪN KIỂM THỬ:
+- Khi đăng nhập với mỗi tài khoản khác nhau, giao diện thanh bên (Sidebar)
+  và các nút chức năng sẽ tự động ẩn/hiện tương ứng với vai trò (RBAC).
+- Sau khi kiểm thử xong, bấm vào nút "Đăng xuất" ở góc dưới thanh Sidebar
+  để chuyển sang tài khoản khác.
+================================================================================

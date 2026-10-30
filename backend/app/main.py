@@ -109,8 +109,7 @@ PAGE_ROUTES = [
     "/guides",
     "/feedbacks",
     "/analytics",
-    "/users",
-    "/sdlc"
+    "/users"
 ]
 
 def _serve_page(page_name: str = "home"):

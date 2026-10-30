@@ -92,7 +92,7 @@
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                 <i class="fa-regular fa-user text-xs"></i>
               </span>
-              <input type="text" id="input-username" required placeholder="admin, tuvan hoặc ketoan" autocomplete="username"
+              <input type="text" id="input-username" required placeholder="Nhập tên đăng nhập..." autocomplete="username"
                 class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all" />
             </div>
           </div>
@@ -118,44 +118,6 @@
             <span id="btn-submit-text">Xác Nhận Đăng Nhập</span>
           </button>
         </form>
-
-        <!-- Divider -->
-        <div class="relative my-5">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200 dark:border-slate-800"></div>
-          </div>
-          <div class="relative flex justify-center text-[10px] uppercase font-bold tracking-wider">
-            <span class="bg-white dark:bg-[#0c1322] px-3 text-slate-400">Đăng nhập nhanh 1 chạm (Demo)</span>
-          </div>
-        </div>
-
-        <!-- Quick 1-Touch Demo Logins -->
-        <div class="grid grid-cols-3 gap-2">
-          <button type="button" onclick="quickLogin('admin', 'admin123')" class="group p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-500 bg-slate-50 dark:bg-slate-900/60 hover:bg-sky-50 dark:hover:bg-sky-950/40 text-left transition-all">
-            <div class="flex items-center space-x-1.5 text-sky-600 dark:text-sky-400 font-bold text-xs mb-0.5">
-              <i class="fa-solid fa-user-shield text-[10px]"></i>
-              <span>Admin</span>
-            </div>
-            <p class="text-[10px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">Toàn quyền</p>
-          </button>
-
-          <button type="button" onclick="quickLogin('tuvan', 'tuvan123')" class="group p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500 bg-slate-50 dark:bg-slate-900/60 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-left transition-all">
-            <div class="flex items-center space-x-1.5 text-amber-600 dark:text-amber-400 font-bold text-xs mb-0.5">
-              <i class="fa-solid fa-headset text-[10px]"></i>
-              <span>Tư Vấn</span>
-            </div>
-            <p class="text-[10px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">Sales & Tour</p>
-          </button>
-
-          <button type="button" onclick="quickLogin('ketoan', 'ketoan123')" class="group p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500 bg-slate-50 dark:bg-slate-900/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-left transition-all">
-            <div class="flex items-center space-x-1.5 text-emerald-600 dark:text-emerald-400 font-bold text-xs mb-0.5">
-              <i class="fa-solid fa-file-invoice-dollar text-[10px]"></i>
-              <span>Kế Toán</span>
-            </div>
-            <p class="text-[10px] text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300">Thu chi & cọc</p>
-          </button>
-        </div>
-
         <!-- Back to Home Link -->
         <div class="mt-6 text-center">
           <a href="/home" class="inline-flex items-center space-x-1.5 text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-400 transition-colors font-medium">
@@ -274,14 +236,7 @@
       showAlert("Đã đăng xuất tài khoản thành công!", "success");
     }
 
-    // Quick Login Demo Trigger
-    function quickLogin(username, password) {
-      document.getElementById('input-username').value = username;
-      document.getElementById('input-password').value = password;
-      submitLogin(username, password);
-    }
-
-    // Form Submit Handler
+// Form Submit Handler
     function handleFormSubmit(e) {
       e.preventDefault();
       const u = document.getElementById('input-username').value.trim();

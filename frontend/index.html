@@ -155,21 +155,6 @@
 
         </div>
 
-        <!-- Báo cáo SDLC & API Documentation -->
-        <div>
-          <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase px-3 block mb-1">Tài Liệu & Báo Cáo</span>
-          <div class="space-y-0.5">
-            <a href="/sdlc" data-tab="sdlc" class="sidebar-nav-item w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
-              <i class="fa-solid fa-book-bookmark w-4 text-center text-indigo-400"></i>
-              <span>Tài Liệu SDLC (KT1-KT3)</span>
-            </a>
-            <a href="/docs" target="_blank" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              <i class="fa-solid fa-code w-4 text-center text-slate-400"></i>
-              <span>Tài Liệu API (Swagger)</span>
-            </a>
-          </div>
-        </div>
-
       </div>
 
       <!-- Footer User Info -->
@@ -1038,75 +1023,6 @@
             </div>
           </div>
 
-        </section>
-
-        <!-- ==================== VIEW 12: TÀI LIỆU SDLC ==================== -->
-        <section id="view-sdlc" class="tab-content-view hidden space-y-6">
-          <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
-            <div>
-              <h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <i class="fa-solid fa-book-bookmark text-sky-500 mr-2.5"></i> Hồ Sơ Tài Liệu Vòng Đời Phần Mềm (SDLC AI)
-              </h2>
-              <p class="text-xs text-slate-500 mt-1">Đáp ứng đầy đủ 4 giai đoạn yêu cầu: KT1, KT2, KT3 và Báo cáo tổng kết Cuối kỳ.</p>
-            </div>
-          </div>
-
-          <!-- SDLC Phase Tabs -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <button onclick="document.querySelectorAll('.sdlc-tab-content').forEach(c=>c.classList.add('hidden')); document.getElementById('sdlc-content-kt1').classList.remove('hidden');" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500 p-3 rounded-xl text-left shadow-sm">
-              <span class="text-[10px] font-bold bg-sky-100 dark:bg-sky-900/50 text-sky-600 dark:text-sky-400 px-2 py-0.5 rounded">GIAI ĐOẠN 1</span>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-1.5">KT1: Phân Tích & Thiết Kế CSDL</p>
-            </button>
-            <button onclick="document.querySelectorAll('.sdlc-tab-content').forEach(c=>c.classList.add('hidden')); document.getElementById('sdlc-content-kt2').classList.remove('hidden');" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500 p-3 rounded-xl text-left shadow-sm">
-              <span class="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded">GIAI ĐOẠN 2</span>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-1.5">KT2: Nghiệp Vụ Chỗ & Thanh Toán</p>
-            </button>
-            <button onclick="document.querySelectorAll('.sdlc-tab-content').forEach(c=>c.classList.add('hidden')); document.getElementById('sdlc-content-kt3').classList.remove('hidden');" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500 p-3 rounded-xl text-left shadow-sm">
-              <span class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded">GIAI ĐOẠN 3</span>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-1.5">KT3: Prompt AI & Chống Ảo Giác</p>
-            </button>
-            <button onclick="document.querySelectorAll('.sdlc-tab-content').forEach(c=>c.classList.add('hidden')); document.getElementById('sdlc-content-cuoiky').classList.remove('hidden');" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-sky-500 p-3 rounded-xl text-left shadow-sm">
-              <span class="text-[10px] font-bold bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded">TỔNG KẾT</span>
-              <p class="text-xs font-bold text-slate-800 dark:text-slate-100 mt-1.5">Cuối Kỳ: Báo Cáo & Triển Khai</p>
-            </button>
-          </div>
-
-          <!-- SDLC Content Boxes -->
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm leading-relaxed text-xs sm:text-sm text-slate-700 dark:text-slate-300">
-            <div id="sdlc-content-kt1" class="sdlc-tab-content space-y-4">
-              <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <span class="inline-block w-2 h-2 rounded-full bg-sky-500 mr-2"></span> KT1: Phân tích Use Case, Luồng Đặt/Hủy Tour & Thiết Kế CSDL
-              </h3>
-              <p>Hệ thống hỗ trợ 3 nhóm tác nhân chính: <strong>Quản lý (Admin)</strong>, <strong>Nhân viên tư vấn (Sales/Consultant)</strong>, và <strong>Kế toán (Accountant)</strong>.</p>
-              <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl space-y-2 border border-slate-200 dark:border-slate-700">
-                <p class="font-bold text-slate-800 dark:text-slate-200">1. Quy trình Khách vãng lai & Hàng chờ tư vấn:</p>
-                <p>Khách vãng lai gửi yêu cầu -&gt; Hệ thống tạo đơn trạng thái <code>WAITING_CONFIRM</code> chưa trừ số chỗ -&gt; Nhân viên tư vấn liên hệ và bấm xác nhận -&gt; Trừ chỗ ngồi chính thức và chuyển sang trạng thái chờ đặt cọc.</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200 mt-2">2. Quy trình Hủy tour và Hoàn tiền:</p>
-                <p>Khách hủy tour -&gt; Phục hồi số chỗ (<code>available_slots += num_people</code>) -&gt; Tự động tính hoàn tiền: 100% (&gt;=15 ngày), 70% (7-14 ngày), 50% (3-6 ngày), 0% (&lt;3 ngày).</p>
-              </div>
-            </div>
-
-            <div id="sdlc-content-kt2" class="sdlc-tab-content hidden space-y-4">
-              <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"></span> KT2: CRUD Nghiệp Vụ, Logic Trừ Chỗ & Chống Overbooking
-              </h3>
-              <p>Hệ thống xử lý nghiệp vụ đặt chỗ thông qua cơ chế transactional locking trong SQLAlchemy, ngăn chặn 100% tình trạng overbooking.</p>
-            </div>
-
-            <div id="sdlc-content-kt3" class="sdlc-tab-content hidden space-y-4">
-              <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <span class="inline-block w-2 h-2 rounded-full bg-amber-500 mr-2"></span> KT3: Thiết Kế Prompt AI Gemini & Chống Ảo Giác
-              </h3>
-              <p>Mô hình Grounded Retrieval-Augmented Generation (G-RAG) đưa danh sách các đợt đi còn chỗ thực tế vào ngữ cảnh <code>{{available_tours}}</code>, cấm AI tự tạo giá hoặc ngày khởi hành.</p>
-            </div>
-
-            <div id="sdlc-content-cuoiky" class="sdlc-tab-content hidden space-y-4">
-              <h3 class="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center">
-                <span class="inline-block w-2 h-2 rounded-full bg-purple-500 mr-2"></span> Cuối Kỳ: Báo Cáo Tổng Kết, Slide Thuyết Trình & Triển Khai
-              </h3>
-              <p>Xem toàn bộ báo cáo chi tiết trong thư mục <code>docs/Cuoi_Ky_Bao_Cao_Tong_Ket.md</code>.</p>
-            </div>
-          </div>
         </section>
 
       </main>
